@@ -10,7 +10,7 @@ terraform {
     region  = "us-east-1"
     profile = "bnycz"
     key     = "terraform_state_file"
-    bucket  = "terraformstateb12"
+    bucket  = "terraformstateb121"
   }
 }
 
