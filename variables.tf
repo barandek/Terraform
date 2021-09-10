@@ -1,3 +1,6 @@
+# Master will be on us-east-1 
+# Worker on us-east-2
+
 variable "profile" {
 	type = string
 	default = "bnycz"
