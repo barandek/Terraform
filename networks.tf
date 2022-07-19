@@ -8,6 +8,11 @@ resource "aws_vpc" "default" {
     )
 }
 
+resource "aws_main_route_table_association" "main_route_table" {
+  vpc_id         = aws_vpc.default.id
+  route_table_id = aws_route_table.route.id
+}
+
 resource "aws_subnet" "public_subnet" {
     vpc_id = aws_vpc.default.id
     map_public_ip_on_launch = true
@@ -37,7 +42,7 @@ resource "aws_internet_gateway" "default" {
     tags = local.common_tags
 }
 
-resource "aws_security_group" "ssh" {
+resource "aws_security_group" "ssh_http" {
     vpc_id = aws_vpc.default.id
     name = "SG for SSH"
     description = "SG for VPC - allow SSH connections"
@@ -51,7 +56,13 @@ resource "aws_security_group" "ssh" {
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
-
+    # HTTP access from anywhere
+    ingress {
+        from_port = 80
+        to_port = 80
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
     # Internet access to anywhere
     egress {
         from_port = 0
