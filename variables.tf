@@ -1,17 +1,17 @@
-# Master will be on us-east-1 
-# Worker on us-east-2
-
-variable "profile" {
-  type    = string
-  default = "bnycz"
+variable "vpc_cidr" {
+  type = string
+  default = "172.32.0.0/24"
+  description = "This CIDR contains addresses used to create VPC"
 }
 
-variable "region-master" {
-  type    = string
-  default = "us-east-1"
+variable "public_subnet_cidr" {
+  type = string
+  default = "172.32.0.0/25"
+  description = "This CIDR contains addresses used to create VPC public subnet"
 }
 
-variable "region-worker" {
-  type    = string
-  default = "us-east-1"
+variable "private_subnet_cidr" {
+  type = string
+  default = "172.32.0.128/25"
+  description = "This CIDR contains addresses used to create VPC private subnet"
 }

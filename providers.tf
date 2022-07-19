@@ -1,11 +1,17 @@
-# create region-master and region-worker providers in aws
-provider "aws" {
-  profile = var.profile
-  region  = var.region-master
-  alias   = "region-master"
+# The default provider configuration; resources that begin with `aws_` will use
+# it as the default, and it can be referenced as `aws`.
+
+# Declare aws providers is required so Terraform install and use it
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "4.22.0"
+    }
+  }  
 }
+
 provider "aws" {
-  profile = var.profile
-  region  = var.region-worker
-  alias   = "region-worker"
+  # Configuration options
+  region = "eu-central-1"
 }

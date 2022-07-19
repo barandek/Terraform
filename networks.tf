@@ -1,144 +1,73 @@
-data "aws_caller_identity" "aws_identity" {}
-
-# Create VPC in us-east-1 called vpc_master and tag master-vpc-jenkins
-# aws.region-master is alias from providers us-east-1
-
-resource "aws_vpc" "vpc_master" {
-  provider             = aws.region-master
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-  tags = {
-    Name = "master-vpc-jenkins"
-  }
+resource "aws_vpc" "default" {
+    cidr_block = var.vpc_cidr
+    tags = merge(
+        local.common_tags,
+        {
+            Name = "VPC-${local.owner}"
+        },
+    )
 }
 
-# Create VPC on worker provider
-resource "aws_vpc" "vpc_worker" {
-  provider             = aws.region-worker
-  cidr_block           = "192.168.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-  tags = {
-    Name = "worker-vpc-jenkins"
-  }
+resource "aws_main_route_table_association" "main_route_table" {
+  vpc_id         = aws_vpc.default.id
+  route_table_id = aws_route_table.route.id
 }
 
-# Create Internet Gateway IGW in us-east-1
-resource "aws_internet_gateway" "igw-master" {
-  provider = aws.region-master
-  vpc_id   = aws_vpc.vpc_master.id
+resource "aws_subnet" "public_subnet" {
+    vpc_id = aws_vpc.default.id
+    map_public_ip_on_launch = true
+    cidr_block = var.public_subnet_cidr
+    tags = merge(
+        local.common_tags,
+        {
+            Name = "Public_Subnet-${local.owner}"
+        },
+    )
 }
 
-# Create Internet Gateway IGW in us-east-2
-resource "aws_internet_gateway" "igw-worker" {
-  provider = aws.region-worker
-  vpc_id   = aws_vpc.vpc_worker.id
+resource "aws_route_table" "route" {
+    vpc_id = aws_vpc.default.id
+
+    route {
+        gateway_id = aws_internet_gateway.default.id
+        cidr_block = "0.0.0.0/0"
+    }
+
+    tags = local.common_tags
 }
 
-# Get all available AZ in VPC for master region
-data "aws_availability_zones" "azs" {
-  provider = aws.region-master
-  state    = "available"
+resource "aws_internet_gateway" "default" {
+    vpc_id = aws_vpc.default.id
+
+    tags = local.common_tags
 }
 
-# Get all available AZ in VPC for worker region
-data "aws_availability_zones" "azs_worker" {
-  provider = aws.region-master
-  state    = "available"
-}
+resource "aws_security_group" "ssh_http" {
+    vpc_id = aws_vpc.default.id
+    name = "SG for SSH"
+    description = "SG for VPC - allow SSH connections"
 
-# Create subnet #1 in us-east-1
-# Takes the element of aws_availability_zones above and takes first element - zero index
-resource "aws_subnet" "subnet_1" {
-  provider          = aws.region-master
-  availability_zone = element(data.aws_availability_zones.azs.names, 0)
-  vpc_id            = aws_vpc.vpc_master.id
-  cidr_block        = "10.0.1.0/24"
-}
+    tags = local.common_tags
 
-# Create subnet #2 in us-east-1
-# Takes the element of aws_availability_zones above and takes second element - first index
-resource "aws_subnet" "subnet_2" {
-  provider          = aws.region-master
-  availability_zone = element(data.aws_availability_zones.azs.names, 1)
-  vpc_id            = aws_vpc.vpc_master.id
-  cidr_block        = "10.0.2.0/24"
+    # SSH access from anywhere
+    ingress {
+        from_port = 22
+        to_port = 22
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+    # HTTP access from anywhere
+    ingress {
+        from_port = 80
+        to_port = 80
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+    # Internet access to anywhere
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
 }
-
-# Create subnet in us-east-2
-resource "aws_subnet" "subnet_1_worker" {
-  provider          = aws.region-worker
-  availability_zone = element(data.aws_availability_zones.azs_worker.names, 0)
-  vpc_id            = aws_vpc.vpc_worker.id
-  cidr_block        = "192.168.1.0/24"
-}
-
-# Initiate Peering connection requests from master to worker
-resource "aws_vpc_peering_connection" "master-worker" {
-  peer_owner_id = data.aws_caller_identity.aws_identity.account_id
-  peer_vpc_id   = aws_vpc.vpc_worker.id
-  vpc_id        = aws_vpc.vpc_master.id
-  peer_region   = var.region-worker
-}
-
-resource "aws_vpc_peering_connection_accepter" "worker-master" {
-  provider                  = aws.region-worker
-  vpc_peering_connection_id = aws_vpc_peering_connection.master-worker.id
-  auto_accept               = true
-}
-
-# Create routing tables to enable communication between two VPC
-resource "aws_route_table" "internet_route" {
-  provider = aws.region-master
-  vpc_id   = aws_vpc.vpc_master.id
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw-master.id
-  }
-  route {
-    cidr_block                = "192.168.1.0/24"
-    vpc_peering_connection_id = aws_vpc_peering_connection.master-worker.id
-  }
-  lifecycle {
-    ignore_changes = all
-  }
-  tags = {
-    Name = "Master-Region-RouteTable"
-  }
-}
-
-# Overwrite default route table of VPC master using route above named "internet_route"
-resource "aws_main_route_table_association" "set-master-default-rt" {
-  provider       = aws.region-master
-  vpc_id         = aws_vpc.vpc_master.id
-  route_table_id = aws_route_table.internet_route.id
-}
-
-# Create routing tables to enable communication between two VPC
-resource "aws_route_table" "internet_route_worker" {
-  provider = aws.region-worker
-  vpc_id   = aws_vpc.vpc_worker.id
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw-worker.id
-  }
-  route {
-    cidr_block                = "10.0.1.0/24"
-    vpc_peering_connection_id = aws_vpc_peering_connection.master-worker.id
-  }
-  lifecycle {
-    ignore_changes = all
-  }
-  tags = {
-    Name = "Worker-Region-RouteTable"
-  }
-}
-
-# Overwrite default route table of VPC worker using route table named "internet_route_worker"
-resource "aws_main_route_table_association" "set-worker-default-rt" {
-  provider       = aws.region-worker
-  vpc_id         = aws_vpc.vpc_worker.id
-  route_table_id = aws_route_table.internet_route_worker.id
-}
-

@@ -1,2 +1,6 @@
 **/.terraform
 *.hcl
+.terraform
+*.tfstate
+*.tfstate.backup
+.infracost
