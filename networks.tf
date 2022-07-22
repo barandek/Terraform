@@ -27,44 +27,76 @@ resource "aws_subnet" "public_subnet" {
 
 resource "aws_route_table" "route" {
     vpc_id = aws_vpc.default.id
-
     route {
         gateway_id = aws_internet_gateway.default.id
         cidr_block = "0.0.0.0/0"
     }
-
-    tags = local.common_tags
+    tags = merge(
+        local.common_tags,
+        {
+            Name = "RouteTable-IGW-${local.owner}"
+        },
+    )
 }
 
 resource "aws_internet_gateway" "default" {
     vpc_id = aws_vpc.default.id
-
     tags = local.common_tags
 }
 
-resource "aws_security_group" "ssh_http" {
+resource "aws_security_group" "sg_ssh" {
     vpc_id = aws_vpc.default.id
     name = "SG for SSH"
     description = "SG for VPC - allow SSH connections"
-
-    tags = local.common_tags
-
+    tags = merge(
+        local.common_tags,
+        {
+            Name = "SG-ssh-${local.exercise_name}"
+        },
+    )
     # SSH access from anywhere
     ingress {
+        description = "SSH access from anywhere"
         from_port = 22
         to_port = 22
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
-    # HTTP access from anywhere
+    egress {
+        description = "Internet access to anywhere"
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+}
+
+resource "aws_security_group" "sg_http" {
+    vpc_id = aws_vpc.default.id
+    name = "SG for HTTP"
+    description = "SG for VPC - allow HTTP/HTTPS connections"
+    tags = merge(
+        local.common_tags,
+        {
+            Name = "SG-http-${local.exercise_name}"
+        },
+    )
     ingress {
+        description = "HTTP access from anywhere"
         from_port = 80
         to_port = 80
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
-    # Internet access to anywhere
+    ingress {
+        description = "HTTPs access from anywhere"
+        from_port = 443
+        to_port = 443
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }    
     egress {
+        description = "Internet access to anywhere"
         from_port = 0
         to_port = 0
         protocol = "-1"

@@ -14,6 +14,10 @@ data "aws_ami" "ec2_most_recent_linux" {
         name = "name"
         values = ["amzn2-ami-kernel*-x86_64-gp2"]
     }
+    filter {
+        name = "root-device-type"
+        values = ["ebs"]
+    }
     owners = ["amazon"]
 }
 
