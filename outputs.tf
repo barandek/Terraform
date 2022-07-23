@@ -9,6 +9,6 @@ output "caller_user" {
 }
 
 output "public_ip_ec2" {
-    value = aws_instance.t2_micro.public_ip
+    value = {for instance in aws_instance.t2_micro: instance.id => instance.public_dns}
     description = "Public IP address of the EC2 instance created"
 }

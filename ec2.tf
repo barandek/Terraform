@@ -1,6 +1,6 @@
 resource "aws_instance" "t2_micro" {
     ami = data.aws_ami.ec2_most_recent_linux.id
-    instance_type = local.instance_type
+    instance_type = var.instance_type_map["${local.environment}"]
     # Expose metadata of the instance and hello-world
     user_data = file("${path.module}/scripts/ec2-configure.sh")
     # Assign to created VPC
@@ -11,7 +11,8 @@ resource "aws_instance" "t2_micro" {
         # This configuration combines some "default" tags with optionally provided additional tags
         local.common_tags,
         {
-            Name = "t2-micro-test"
+            Name = "t2-micro-test-${count.index}"
+            #AZ = "${element(data.aws_availability_zones.az_available.names, count.index)}"
         },
     )
     # Make sure root volume gets deleted after you destroy EC2 instance
@@ -25,5 +26,8 @@ resource "aws_instance" "t2_micro" {
     vpc_security_group_ids = [aws_security_group.sg_ssh.id, aws_security_group.sg_http.id]
     # SSH key configuration
     key_name = var.instance_keypair
+    # Create instances with meta-arguments (count)
+    count = var.ha_az
+    # Availability Zones - ensure High Availability
+    #availability_zone = "${element(data.aws_availability_zones.az_available.names, count.index)}"
 }
-

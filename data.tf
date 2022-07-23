@@ -1,5 +1,4 @@
 # Find the latest available AMI for EC2 Amazon Linux 2
-
 data "aws_ami" "ec2_most_recent_linux" {
     most_recent = true
     filter {
@@ -23,3 +22,8 @@ data "aws_ami" "ec2_most_recent_linux" {
 
 # Use this data source to get info about account terraform uses
 data "aws_caller_identity" "current" {}
+
+# Find Availability Zones
+data "aws_availability_zones" "az_available" {
+    state = "available"
+}

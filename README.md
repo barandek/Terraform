@@ -1,11 +1,11 @@
 # terraform_courses
 Learning Terraform
 
-This repository used to learn Terraform and present the code that I used/know
+This repository created to practice/learn Terraform and present the code that I used 
 My Terraform skills includes:
 
 EC2:
-- create ec2 instances (instane type, ami)
+- create ec2 instances (instane type, ami) with count index
 - find latest ec2 ami image (filter by values)
 - ssh key configuration
 - custom user data scripts
@@ -20,6 +20,6 @@ NETWORKS:
  
 Terraform:
 - configure required providers for aws 
-- output the most important values
+- output the most important values (using for loops)
 - declare and use variables (string type)
 - tag resources with custom names
