@@ -21,5 +21,7 @@ NETWORKS:
 Terraform:
 - configure required providers for aws 
 - output the most important values (using for loops)
-- declare and use variables (string type)
+- declare and use variables (string, map, list types)
 - tag resources with custom names
+- aws - availability zones data source 
+- use count/for loops
