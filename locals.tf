@@ -11,3 +11,11 @@ locals {
         Environment = local.environment
     }
 }
+
+locals {
+    instance_type_check = "${keys({
+        for key, values
+        in data.aws_ec2_instance_type_offerings.instance_type_check: 
+        key => values.instance_types if length(values.instance_types) != 0
+    })}"
+}

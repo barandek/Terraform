@@ -1,4 +1,5 @@
 resource "aws_instance" "ins1" {
+    count = var.ha_az
     ami = data.aws_ami.ec2_most_recent_linux.id
     instance_type = var.instance_type_map["${local.environment}"]
     # Expose metadata of the instance and hello-world
@@ -27,15 +28,10 @@ resource "aws_instance" "ins1" {
     # SSH key configuration
     key_name = var.instance_keypair
     # Create instances with meta-arguments (count)
-    count = var.ha_az
     # Availability Zones - ensure High Availability
     # Filtered output
     # Use for loop in map
     # if condition, keys function
-    availability_zone = "${element(keys({
-        for key, values
-        in data.aws_ec2_instance_type_offerings.instance_type_check: 
-        key => values.instance_types if length(values.instance_types) != 0
-    }), count.index)}"
+    availability_zone = "${element(local.instance_type_check, count.index)}"
     #availability_zone = "${element(data.aws_availability_zones.az_available.names, count.index)}"
 }

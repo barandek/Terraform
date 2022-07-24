@@ -47,7 +47,7 @@ resource "aws_internet_gateway" "default" {
     tags = local.common_tags
 }
 
-resource "aws_security_group" "sg_ssh" {
+resource "aws_security_group" "sg_ssh" { 
     vpc_id = aws_vpc.default.id
     name = "SG for SSH"
     description = "SG for VPC - allow SSH connections"
@@ -106,3 +106,46 @@ resource "aws_security_group" "sg_http" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 }
+
+
+
+
+/*
+
+# Use of VPC module
+# Module which creates VPC resources on AWS
+
+module "vpc" {
+    source  = "terraform-aws-modules/vpc/aws"
+    version = "3.14.2"
+    # VPC Basic Details
+    name = "VPC-${local.owner}"
+    for_each = var.ha_az
+    cidr = var.vpc_cidr
+    azs = ["${element(data.aws_availability_zones.az_available.names, each.key)}"]
+    # "172.32.0.0/24", 4, 2 -> 172.32.0.255
+    # "172.34.0.0/24" -> 
+    private_subnets = ["${cidrsubnet(var.vpc_cidr,8,each.key)}"]
+    private_subnet_tags = {
+        Name = "Private_Subnet-${local.owner}"
+    }
+    public_subnets = ["${cidrsubnet(var.vpc_cidr,7,each.key)}"]
+    public_subnet_tags = {
+        Name = "Public_Subnet-${local.owner}"
+    }
+    # NAT Gateways 
+    enable_nat_gateway = true
+    # Create NAT gateway in all AZ's
+    single_nat_gateway = false
+    # VPC DNS setup
+    enable_dns_hostnames = true
+    enable_dns_support = true
+    # Add common tags to all resources
+    tags = local.common_tags
+    # VPC Tags
+    vpc_tags = {
+        Name = "${local.environment}-VPC-${local.owner}"
+    }
+}
+
+*/

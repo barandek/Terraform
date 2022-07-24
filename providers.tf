@@ -3,10 +3,11 @@
 
 # Declare aws providers is required so Terraform install and use it
 terraform {
+  required_version = "~> 1.2"
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "4.22.0"
+      version = "~> 4.22"
     }
   }  
 }
