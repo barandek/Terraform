@@ -26,4 +26,24 @@ data "aws_caller_identity" "current" {}
 # Find Availability Zones
 data "aws_availability_zones" "az_available" {
     state = "available"
+# If the Region is enabled by default, the output includes the following:
+# "OptInStatus": "opt-in-not-required"
+    filter {
+      name = "opt-in-status"
+      values = ["opt-in-not-required"]
+    }
+}
+
+# Instance type check/test in AZ
+data "aws_ec2_instance_type_offerings" "instance_type_check" {
+    for_each = toset(data.aws_availability_zones.az_available.names)
+    filter {
+        name = "instance-type"
+        values = [var.instance_type_map["${local.environment}"]]
+    }
+    filter {
+        name = "location"
+        values = [each.key]
+    }
+    location_type = "availability-zone"
 }

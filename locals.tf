@@ -1,7 +1,7 @@
 locals {
     owner = data.aws_caller_identity.current.user_id
     exercise_name = "EC2_creation"
-    environment = "test"
+    environment = "dev"
 }
 
 locals {
