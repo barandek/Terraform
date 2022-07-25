@@ -13,9 +13,26 @@ locals {
 }
 
 locals {
-    instance_type_check = "${keys({
+    az_filtered = "${keys({
         for key, values
         in data.aws_ec2_instance_type_offerings.instance_type_check: 
         key => values.instance_types if length(values.instance_types) != 0
     })}"
+}
+
+locals {
+    # create dynamic block for ingress security groups
+    ingress_rules = [{
+        port = 443
+        description = "HTTPS"
+    },
+    {
+        port = 80
+        description = "HTTP"
+    },
+    {
+        port = 22
+        description = "SSH"
+    }
+    ]
 }
