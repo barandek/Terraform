@@ -9,6 +9,14 @@ terraform {
       source = "hashicorp/aws"
       version = "~> 4.22"
     }
+  }
+  backend "s3" {
+    bucket = "terraform-s3-bucket-bnycz"
+    key = "dev/wordpress/terraform.tfstate"
+    region = "eu-central-1"
+
+    # State Locking
+    dynamodb_table = "dev-wordpress-bnycz"
   }  
 }
 
