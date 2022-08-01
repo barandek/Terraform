@@ -12,7 +12,7 @@ terraform {
   }
   backend "s3" {
     bucket = "terraform-s3-bucket-bnycz"
-    key = "dev/vpc/terraform.tfstate"
+    key = "dev/ec2/terraform.tfstate"
     region = "eu-central-1"
 
     # State Locking

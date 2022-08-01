@@ -1,21 +1,3 @@
-variable "vpc_cidr" {
-  type = string
-  default = "172.32.0.0/23"
-  description = "This CIDR contains addresses used to create VPC"
-}
-
-variable "public_subnets_cidr" {
-  type = list(string)
-  default = ["172.32.0.0/25", "172.32.1.0/25"]
-  description = "This CIDR contains addresses used to create VPC public subnet"
-}
-
-variable "private_subnets_cidr" {
-  type = list(string)
-  default = ["172.32.0.128/25", "172.32.1.128/25"]
-  description = "This CIDR contains addresses used to create VPC private subnet"
-}
-
 variable "aws_region" {
   type = string
   default = "eu-central-1"

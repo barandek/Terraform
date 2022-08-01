@@ -47,3 +47,13 @@ data "aws_ec2_instance_type_offerings" "instance_type_check" {
     }
     location_type = "availability-zone"
 }
+
+data "terraform_remote_state" "vpc" {
+    backend = "s3"
+    config = {
+        bucket = "terraform-s3-bucket-bnycz"
+        key = "dev/vpc/terraform.tfstate"
+        region = var.aws_region
+    }
+
+}

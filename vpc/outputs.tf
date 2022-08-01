@@ -19,6 +19,15 @@ output "public_subnets" {
 }
 
 output "azs" {
-    description = "List of AZ specified in VPC"
-    value = module.vpc.azs
+    description = "List of AZ available"
+    value = data.aws_availability_zones.az_available.names
+}
+
+output "sliced_az" {
+    description = "List of AZ selected for High Availability"
+    value = local.az_ha
+}
+
+output "sg_ssh_https" {
+    value = aws_security_group.sg_ssh_https.id
 }
