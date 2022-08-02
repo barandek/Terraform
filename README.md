@@ -7,9 +7,10 @@ My Terraform skills includes:
 EC2:
 - create ec2 instances (instane type, ami) with count index
 - find latest ec2 ami image (filter by values)
-- ssh key configuration
+- ssh key configuration / generate ssh key pair
 - custom user data scripts
 - High Availability EC2 instances (across 2 AZ)
+- ASG with Spot instances and Capacity Rebalance
 
 BACKUPS:
 - configure backend terraform state files on aws s3
@@ -19,7 +20,6 @@ NETWORKS:
 - IGW
 - security groups, custom sg rules
 - VPC module implementation
-- dynamic blocks (for ex. used in security groups)
  
 Terraform:
 - configure required providers for aws 
@@ -29,3 +29,6 @@ Terraform:
 - aws - availability zones data source 
 - use count/for loops
 - filtering output with condition/ key function
+- dynamic blocks (for ex. used in security groups)
+- using terraform_remote_state data source
+- split resources into folders (separate parts of architecture)
