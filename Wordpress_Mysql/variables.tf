@@ -22,20 +22,14 @@ variable "ha_az" {
   default = 2
 }
 
-variable "vpc_cidr" {
-  type = string
-  default = "172.32.0.0/23"
-  description = "This CIDR contains addresses used to create VPC"
+variable "site_domain" {
+  type        = string
+  description = "The site domain name to configure (without any subdomains such as 'www')"
+  default = "testdomain"
 }
 
-variable "public_subnets_cidr" {
-  type = list(string)
-  default = ["172.32.0.0/25", "172.32.1.0/25"]
-  description = "This CIDR contains addresses used to create VPC public subnet"
-}
-
-variable "private_subnets_cidr" {
-  type = list(string)
-  default = ["172.32.0.128/25", "172.32.1.128/25"]
-  description = "This CIDR contains addresses used to create VPC private subnet"
+variable "site_prefix" {
+  type        = string
+  description = "The subdomain prefix of the website domain. E.g. www"
+  default     = "www"
 }
