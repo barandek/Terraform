@@ -11,6 +11,7 @@ resource "aws_key_pair" "generated_key_ssh" {
 
 # Launch Template for ASG
 resource "aws_launch_template" "linux_ami" {
+  count = var.use_asg_spot == true ? 1 : 0
   name_prefix   = "wordpress"
   image_id = data.aws_ami.ec2_most_recent_linux.id
   key_name = aws_key_pair.generated_key_ssh.key_name
@@ -30,6 +31,7 @@ resource "aws_launch_template" "linux_ami" {
 
 # ASG with Spot instances and Capacity Rebalance
 resource "aws_autoscaling_group" "example" {
+  count = var.use_asg_spot == true ? 1 : 0
   capacity_rebalance  = true
   desired_capacity    = 1
   max_size            = 1
@@ -47,7 +49,7 @@ resource "aws_autoscaling_group" "example" {
 
     launch_template {
       launch_template_specification {
-        launch_template_id = aws_launch_template.linux_ami.id
+        launch_template_id = aws_launch_template.linux_ami[0].id
         version = "$Latest"
       }
 

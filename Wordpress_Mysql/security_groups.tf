@@ -1,5 +1,5 @@
 resource "aws_security_group" "mysql_sgroup" {
-  name        = "${var.site_domain}_mysql_sg"
+  name        = "mysql_sg"
   description = "security group for serverless wordpress mysql"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 }

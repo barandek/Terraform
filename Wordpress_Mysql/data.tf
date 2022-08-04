@@ -33,6 +33,27 @@ data "aws_ami" "ec2_most_recent_linux" {
     owners = ["amazon"]
 }
 
+data "aws_ami" "wordpress_bitnami" {
+    most_recent = true
+    filter {
+        name = "architecture"
+        values = ["x86_64"]
+    }
+    filter {
+        name = "virtualization-type"
+        values = ["hvm"]
+    }
+    filter {
+        name = "name"
+        values = ["bitnami-wordpress-*-debian-11-x86_64-hvm-ebs*"]
+    }
+    filter {
+        name = "root-device-type"
+        values = ["ebs"]
+    }
+    owners = ["aws-marketplace"]
+}
+
 data "terraform_remote_state" "vpc" {
     backend = "s3"
     config = {

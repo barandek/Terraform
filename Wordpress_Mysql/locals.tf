@@ -1,5 +1,5 @@
 locals {
-  name   = "complete-mysql"
+  db_name   = "Wordpress_MYSQL_${local.tags.Environment}"
   tags = {
     Owner       = "rds_test"
     Environment = "dev"
