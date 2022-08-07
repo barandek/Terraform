@@ -28,9 +28,3 @@ locals {
 locals {
     az_ha = slice(data.aws_availability_zones.az_available.names, 0, var.ha_az)
 }
-
-locals {
-  cidrsubnet = {
-
-  }
-}

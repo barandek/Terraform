@@ -14,7 +14,7 @@ resource "aws_launch_template" "linux_ami" {
   count = var.use_asg_spot == true ? 1 : 0
   name_prefix   = "wordpress"
   image_id = data.aws_ami.ec2_most_recent_linux.id
-  key_name = aws_key_pair.generated_key_ssh.key_name
+  key_name = var.ec2_custom_ssh_keypair_name != null ? var.ec2_custom_ssh_keypair_name : aws_key_pair.generated_key_ssh.key_name
   # TBD vpc_security_group_ids = ["TBD"]
 
   # TBD user_data = filebase64("${path.module}/example.sh")
@@ -30,12 +30,12 @@ resource "aws_launch_template" "linux_ami" {
 }
 
 # ASG with Spot instances and Capacity Rebalance
-resource "aws_autoscaling_group" "example" {
+resource "aws_autoscaling_group" "asg_wordpress" {
   count = var.use_asg_spot == true ? 1 : 0
   capacity_rebalance  = true
-  desired_capacity    = 1
-  max_size            = 1
-  min_size            = 1
+  desired_capacity    = var.ec2_numInstances
+  max_size            = var.ec2_numInstances
+  min_size            = var.ec2_numInstances
   default_cooldown = 300 
   vpc_zone_identifier = [data.terraform_remote_state.vpc.outputs.public_subnets[0]]
 
@@ -62,6 +62,10 @@ resource "aws_autoscaling_group" "example" {
         instance_type     = "t3.micro"
         weighted_capacity = "1"
       }
+      override {
+        instance_type     = "t3a.small"
+        weighted_capacity = "1"
+      }      
     }
   }
 }

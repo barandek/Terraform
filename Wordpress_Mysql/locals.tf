@@ -25,3 +25,17 @@ locals {
 locals {
   az_name = "eu-central-1a"
 }
+
+# ALB security group ingress/egress rules map
+locals {
+    # default VPC security group - dynamic block (ingress)
+    alb_ingress_rules = [{
+        port = 443
+        description = "HTTPS"
+    },
+    {
+        port = 80
+        description = "HTTP"
+    }
+    ]
+}

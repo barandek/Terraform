@@ -4,13 +4,14 @@ variable "aws_region" {
   description = "AWS region in which resources will be created"
 }
 
-variable "custom_instance_keypair_name" {
+variable "ec2_custom_ssh_keypair_name" {
   type = string
   default = null
-  description = "AWS EC2 Key Pair name associated with EC2 instance"
+  description = "AWS EC2 Key Pair name associated with EC2 instance, set to null if you want to generate new one"
 }
 
 variable "base_path" {
+  description = "Base path where to copy ssh keys"
   default = "~/.ssh"
 }
 
@@ -18,12 +19,6 @@ variable "instance_type" {
   description = "EC2 Instance Type - map for different environments"
   type = string
   default = "t3.micro"
-}
-
-variable "ha_az" {
-  description = "Number of AZ to use to provide HA of instances"
-  type = number
-  default = 2
 }
 
 variable "rds_instance_class" {
@@ -65,4 +60,20 @@ variable "instance_type_map" {
 variable "ec2_public_subnet" {
   type = bool
   default = false
+}
+
+variable "ec2_numInstances" {
+  type = number
+  default = null
+}
+
+variable "ec2_EBSvolumeSize" {
+  type = number
+  default = 10
+}
+
+variable "wordpress_ssl_acm_certificate_arn" {
+  description = "Load Balancer SSL certificate arn from ACM" 
+  type = string
+  default = null
 }

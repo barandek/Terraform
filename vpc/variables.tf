@@ -25,3 +25,9 @@ variable "ha_az" {
   type = number
   default = 2
 }
+
+variable "create_nat_gateway" {
+  description = "Switch to create NAT gateway in private subnet"
+  type = bool
+  default = true
+}

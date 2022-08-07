@@ -8,20 +8,20 @@ module "vpc" {
     name = "VPC-${local.environment}-${local.name}"
     cidr = var.vpc_cidr
     azs = "${data.aws_availability_zones.az_available.names}"
-    private_subnets = var.private_subnets_cidr
+    private_subnets = slice(var.private_subnets_cidr, 0, var.ha_az)
     #private_subnets = ["${cidrsubnet(var.vpc_cidr,8,each.key)}"]
     private_subnet_tags = {
         Name = "Private_Subnet-${local.name}"
         Owner = "${local.owner}"
     }
-    public_subnets = var.public_subnets_cidr
+    public_subnets = slice(var.public_subnets_cidr, 0, var.ha_az)
     #public_subnets = ["${cidrsubnet(var.vpc_cidr,8,each.key)}"]
     public_subnet_tags = {
         Name = "Public_Subnet-${local.name}"
         Owner = "${local.owner}"
     }
     # NAT Gateways 
-    enable_nat_gateway = true
+    enable_nat_gateway = var.create_nat_gateway == true ? true : false
     single_nat_gateway = false
     one_nat_gateway_per_az = false
 
