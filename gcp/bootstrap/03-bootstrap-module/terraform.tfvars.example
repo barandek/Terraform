@@ -1,0 +1,19 @@
+# Example Terraform variables for bootstrap module
+# Copy this file to terraform.tfvars and update with your values
+
+# Required variables
+project_id = "your-gcp-project-id"
+region     = "us-central1"
+
+# Optional variables (uncomment to customize)
+# environments = ["dev", "stg", "prd"]
+# bucket_prefix = "terraform-state"
+# enable_versioning = true
+# lifecycle_age_days = 30
+
+# labels = {
+#   managed_by = "terraform"
+#   purpose    = "state-storage"
+#   team       = "devops"
+#   cost_center = "engineering"
+# }
