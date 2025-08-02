@@ -1,0 +1,21 @@
+# Production Environment Configuration
+# Copy this file to terraform.tfvars and update with your values
+
+# Required: Your GCP Project ID for production
+project_id = "your-gcp-project-prd"
+
+# Optional: Override default region (must be free tier eligible)
+# region = "us-central1"
+
+# Optional: Override default zone
+# zone = "us-central1-c"
+
+# Optional: Override project name
+# project_name = "gcp-terraform-learning"
+
+# Optional: Additional production-specific labels
+# additional_labels = {
+#   owner = "ops-team"
+#   team  = "learning"
+#   purpose = "production"
+# }

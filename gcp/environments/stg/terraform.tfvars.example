@@ -1,0 +1,21 @@
+# Staging Environment Configuration
+# Copy this file to terraform.tfvars and update with your values
+
+# Required: Your GCP Project ID for staging
+project_id = "your-gcp-project-stg"
+
+# Optional: Override default region (must be free tier eligible)
+# region = "us-central1"
+
+# Optional: Override default zone
+# zone = "us-central1-b"
+
+# Optional: Override project name
+# project_name = "gcp-terraform-learning"
+
+# Optional: Additional staging-specific labels
+# additional_labels = {
+#   owner = "qa-team"
+#   team  = "learning"
+#   purpose = "staging"
+# }

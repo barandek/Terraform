@@ -1,0 +1,21 @@
+# Development Environment Configuration
+# Copy this file to terraform.tfvars and update with your values
+
+# Required: Your GCP Project ID for development
+project_id = "your-gcp-project-dev"
+
+# Optional: Override default region (must be free tier eligible)
+# region = "us-central1"
+
+# Optional: Override default zone
+# zone = "us-central1-a"
+
+# Optional: Override project name
+# project_name = "gcp-terraform-learning"
+
+# Optional: Additional development-specific labels
+# additional_labels = {
+#   owner = "dev-team"
+#   team  = "learning"
+#   purpose = "development"
+# }
